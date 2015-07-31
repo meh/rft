@@ -71,8 +71,10 @@ pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
 
 	// finish the inversion by unscaling by the length
 	for output in output.iter_mut() {
-		let inverse = output.to_num().unscale(length);
+		let real = output.real() / length;
+		let imag = output.imag() / length;
 
-		output.set(&inverse);
+		output.set_real(real);
+		output.set_imag(imag);
 	}
 }
