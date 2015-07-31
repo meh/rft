@@ -1,7 +1,7 @@
 use num::{Zero, One};
 use Precision;
 
-pub trait Real: Zero + One {
+pub trait Real: Zero + One + Clone {
 	fn get(&self) -> Precision;
 }
 
