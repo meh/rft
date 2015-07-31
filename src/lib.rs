@@ -12,3 +12,5 @@ pub use real::{Real, RealMut};
 
 mod complex;
 pub use complex::{Complex, ComplexMut};
+
+pub mod discrete;
