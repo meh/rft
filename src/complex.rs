@@ -1,26 +1,9 @@
 use num::{self, Zero, One};
 use {Precision, Real};
 
-pub trait Complex: Zero + One {
+pub trait Complex: Zero + One + Clone {
 	fn real(&self) -> Precision;
 	fn imag(&self) -> Precision;
-
-	#[inline]
-	fn exp(&self) -> num::Complex<Precision> {
-		num::Complex::new(
-			self.real().exp() * self.imag().cos(),
-			self.real().exp() * self.imag().sin())
-	}
-
-	#[inline]
-	fn add(&self, value: Precision) -> num::Complex<Precision> {
-		num::Complex::new(self.real() + value, self.imag())
-	}
-
-	#[inline]
-	fn sub(&self, value: Precision) -> num::Complex<Precision> {
-		num::Complex::new(self.real() - value, self.imag())
-	}
 
 	#[inline]
 	fn to_num(&self) -> num::Complex<Precision> {
@@ -42,53 +25,98 @@ pub trait ComplexMut: Complex {
 		self.set_real(value.real());
 		self.set_imag(value.imag());
 	}
+
+	#[inline]
+	fn mul<C: Complex>(&mut self, value: &C) {
+		let real = self.real();
+		let imag = self.imag();
+
+		self.set_real(real * value.real());
+		self.set_imag(imag * value.imag());
+	}
+
+	#[inline]
+	fn scale(&mut self, value: Precision) {
+		let real = self.real();
+		let imag = self.imag();
+
+		self.set_real(real * value);
+		self.set_imag(imag * value);
+	}
+
+	fn div<C: Complex>(&mut self, value: &C) {
+		let real = self.real();
+		let imag = self.imag();
+
+		self.set_real(real / value.real());
+		self.set_imag(imag / value.imag());
+	}
+
+	#[inline]
+	fn unscale(&mut self, value: Precision) {
+		let real = self.real();
+		let imag = self.imag();
+
+		self.set_real(real / value);
+		self.set_imag(imag / value);
+	}
 }
 
 impl Complex for num::Complex<f32> {
+	#[inline(always)]
 	fn real(&self) -> Precision {
 		self.re as Precision
 	}
 
+	#[inline(always)]
 	fn imag(&self) -> Precision {
 		self.im as Precision
 	}
 }
 
 impl Complex for num::Complex<f64> {
+	#[inline(always)]
 	fn real(&self) -> Precision {
 		self.re as Precision
 	}
 
+	#[inline(always)]
 	fn imag(&self) -> Precision {
 		self.im as Precision
 	}
 }
 
 impl ComplexMut for num::Complex<f32> {
+	#[inline(always)]
 	fn set_real(&mut self, value: Precision) {
 		self.re = value as f32;
 	}
 
+	#[inline(always)]
 	fn set_imag(&mut self, value: Precision) {
 		self.im = value as f32;
 	}
 }
 
 impl ComplexMut for num::Complex<f64> {
+	#[inline(always)]
 	fn set_real(&mut self, value: Precision) {
 		self.re = value as f64;
 	}
 
+	#[inline(always)]
 	fn set_imag(&mut self, value: Precision) {
 		self.im = value as f64;
 	}
 }
 
 impl<R: Real> Complex for R {
+	#[inline(always)]
 	fn real(&self) -> Precision {
 		self.get()
 	}
 
+	#[inline(always)]
 	fn imag(&self) -> Precision {
 		0.0
 	}
