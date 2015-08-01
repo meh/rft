@@ -6,6 +6,11 @@ pub trait Complex: Zero + One + Clone {
 	fn imag(&self) -> Precision;
 
 	#[inline]
+	fn norm_sqr(&self) -> Precision {
+		self.real() * self.real() + self.imag() * self.imag()
+	}
+
+	#[inline]
 	fn to_num(&self) -> num::Complex<Precision> {
 		num::Complex::new(self.real(), self.imag())
 	}
@@ -31,8 +36,8 @@ pub trait ComplexMut: Complex {
 		let real = self.real();
 		let imag = self.imag();
 
-		self.set_real(real * value.real());
-		self.set_imag(imag * value.imag());
+		self.set_real(real * value.real() - imag * value.imag());
+		self.set_imag(real * value.imag() + imag * value.real());
 	}
 
 	#[inline]
@@ -47,9 +52,10 @@ pub trait ComplexMut: Complex {
 	fn div<C: Complex>(&mut self, value: &C) {
 		let real = self.real();
 		let imag = self.imag();
+		let sqr  = self.norm_sqr();
 
-		self.set_real(real / value.real());
-		self.set_imag(imag / value.imag());
+		self.set_real((real * value.real() + imag * value.imag()) / sqr);
+		self.set_imag((imag * value.real() - real * value.imag()) / sqr);
 	}
 
 	#[inline]
