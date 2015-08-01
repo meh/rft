@@ -17,6 +17,8 @@ pub mod discrete;
 
 pub mod cooley_tukey;
 
+pub mod bluestein;
+
 pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
 	let mut output = vec![CO::zero(); input.len()];
 
@@ -24,7 +26,7 @@ pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
 		cooley_tukey::forward(input, &mut output);
 	}
 	else {
-		unimplemented!();
+		bluestein::forward(input, &mut output);
 	}
 
 	output
@@ -37,7 +39,7 @@ pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
 		cooley_tukey::inverse(input, &mut output);
 	}
 	else {
-		unimplemented!();
+		bluestein::inverse(input, &mut output);
 	}
 
 	// the implementations do no scaling internally
