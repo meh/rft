@@ -1,10 +1,10 @@
 use num;
-use strided::Stride;
+use strided::{Stride, MutStride};
 use std::f64::consts::PI;
 
 use {Precision, Complex, ComplexMut};
 
-fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, output: &mut [CO]) {
+fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	// cache the length
 	let length = input.len();
 
@@ -20,13 +20,13 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, out
 	let (evens, odds) = input.substrides2();
 
 	// break the output into two halves (front and back, not alternating)
-	let (left, right) = output.split_at_mut(length >> 1);
+	let (mut left, mut right) = output.split_at_mut(length >> 1);
 
 	// recursively perform two FFTs on alternating elements of the input, writing
 	// the results into the first and second half of the output array
 	// respectively
-	fft(direction, evens, left);
-	fft(direction, odds, right);
+	fft(direction, evens, left.reborrow());
+	fft(direction, odds, right.reborrow());
 
 	// exp(-2πi/N)
 	let twiddle = num::Complex::from_polar(&1.0,
@@ -48,29 +48,30 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, out
 	}
 }
 
-pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	assert_eq!(input.len(), output.len());
 
 	// the length has to be a power of two
 	assert!(input.len().is_power_of_two(), "length is not a power of two");
 
-	fft(-2.0, Stride::new(input), output);
+	fft(-2.0, input, output);
 }
 
-pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	assert_eq!(input.len(), output.len());
 
 	// the length has to be a power of two
 	assert!(input.len().is_power_of_two(), "length is not a power of two");
 
-	fft(2.0, Stride::new(input), output);
+	fft(2.0, input, output);
 }
 
 #[cfg(test)]
 mod tests {
 	use num::Complex;
+	use strided::{Stride, MutStrided};
 	use ::ComplexMut;
 
 	macro_rules! assert_approx_eq {
@@ -83,7 +84,7 @@ mod tests {
 	#[test]
 	fn forward() {
 		let mut output = vec![Complex::new(0.0, 0.0); 4];
-		super::forward(&[1.0, 1.0, 0.0, 0.0], &mut output);
+		super::forward(Stride::new(&[1.0, 1.0, 0.0, 0.0]), output.as_stride_mut());
 
 		assert_approx_eq!(output[0], Complex::new(2.00,  0.00), 2);
 		assert_approx_eq!(output[1], Complex::new(1.00, -1.00), 2);
@@ -94,7 +95,7 @@ mod tests {
 	#[test]
 	fn inverse() {
 		let mut output = vec![Complex::new(0.0, 0.0); 4];
-		super::inverse(&[1.0, 1.0, 0.0, 0.0], &mut output);
+		super::inverse(Stride::new(&[1.0, 1.0, 0.0, 0.0]), output.as_stride_mut());
 
 		for output in output.iter_mut() {
 			ComplexMut::unscale(output, 4.0);

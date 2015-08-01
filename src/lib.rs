@@ -1,6 +1,7 @@
 extern crate num;
 
 extern crate strided;
+use strided::{Strided, MutStrided};
 
 #[cfg(feature = "f32")]
 pub type Precision = f32;
@@ -19,27 +20,29 @@ pub mod cooley_tukey;
 
 pub mod bluestein;
 
-pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
+pub fn forward<CI: Complex, CO: ComplexMut, I: Strided<Elem=CI>>(input: I) -> Vec<CO> {
+	let     input  = input.as_stride();
 	let mut output = vec![CO::zero(); input.len()];
 
 	if input.len().is_power_of_two() {
-		cooley_tukey::forward(input, &mut output);
+		cooley_tukey::forward(input, output.as_stride_mut());
 	}
 	else {
-		bluestein::forward(input, &mut output);
+		bluestein::forward(input, output.as_stride_mut());
 	}
 
 	output
 }
 
-pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
+pub fn inverse<CI: Complex, CO: ComplexMut, I: Strided<Elem=CI>>(input: I) -> Vec<CO> {
+	let     input  = input.as_stride();
 	let mut output = vec![CO::zero(); input.len()];
 
 	if input.len().is_power_of_two() {
-		cooley_tukey::inverse(input, &mut output);
+		cooley_tukey::inverse(input, output.as_stride_mut());
 	}
 	else {
-		bluestein::inverse(input, &mut output);
+		bluestein::inverse(input, output.as_stride_mut());
 	}
 
 	// the implementations do no scaling internally

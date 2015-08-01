@@ -1,11 +1,12 @@
-use num::{self, Zero};
 use std::cmp;
 use std::f64::consts::PI;
+use num::{self, Zero};
+use strided::{Strided, MutStrided, Stride, MutStride};
 
 use {Precision, Complex, ComplexMut};
 use cooley_tukey as ct;
 
-fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], output: &mut [CO]) {
+fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	let     length = input.len();
 	let mut next   = 1;
 
@@ -41,7 +42,7 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], output: 
 	}
 
 	// do the convultion
-	convolve(&mut a, &mut b, output);
+	convolve(&mut a, &mut b, output.reborrow());
 
 	// postprocessing
 	for (output, exp) in output.iter_mut().zip(t.iter()) {
@@ -49,7 +50,7 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], output: 
 	}
 }
 
-fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Complex<Precision>], output: &mut [CO]) {
+fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Complex<Precision>], mut output: MutStride<CO>) {
 	// cache the length
 	let length = x.len();
 	
@@ -57,10 +58,10 @@ fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Com
 	let mut tmp = vec![num::Complex::<Precision>::zero(); length];
 
 	// forward FFT on y (tmp)
-	ct::forward(y, &mut tmp);
+	ct::forward(y.as_stride(), tmp.as_stride_mut());
 
 	// forward FFT on x (y)
-	ct::forward(x, y);
+	ct::forward(x.as_stride(), y.as_stride_mut());
 
 	// multiply x (y) with y (tmp)
 	for i in 0 .. length {
@@ -68,7 +69,7 @@ fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Com
 	}
 
 	// inverse FFT on x (y)
-	ct::inverse(y, x);
+	ct::inverse(y.as_stride(), x.as_stride_mut());
 
 	// scale and set the output
 	for (i, output) in output.iter_mut().enumerate() {
@@ -76,14 +77,14 @@ fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Com
 	}
 }
 
-pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	assert_eq!(input.len(), output.len());
 
 	fft(-1.0, input, output);
 }
 
-pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	assert_eq!(input.len(), output.len());
 
@@ -93,6 +94,7 @@ pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
 #[cfg(test)]
 mod tests {
 	use num::Complex;
+	use strided::{Stride, MutStrided};
 	use ::ComplexMut;
 
 	macro_rules! assert_approx_eq {
@@ -105,7 +107,7 @@ mod tests {
 	#[test]
 	fn forward() {
 		let mut output = vec![Complex::new(0.0, 0.0); 5];
-		super::forward(&[1.0, 1.0, 0.0, 0.0, 0.5], &mut output);
+		super::forward(Stride::new(&[1.0, 1.0, 0.0, 0.0, 0.5]), output.as_stride_mut());
 
 		assert_approx_eq!(output[0], Complex::new( 2.50, -0.001), 2);
 		assert_approx_eq!(output[1], Complex::new( 1.46, -0.48 ), 2);
@@ -117,7 +119,7 @@ mod tests {
 	#[test]
 	fn inverse() {
 		let mut output = vec![Complex::new(0.0, 0.0); 5];
-		super::inverse(&[1.0, 1.0, 0.0, 0.0, 0.5], &mut output);
+		super::inverse(Stride::new(&[1.0, 1.0, 0.0, 0.0, 0.5]), output.as_stride_mut());
 
 		for output in output.iter_mut() {
 			ComplexMut::unscale(output, 5.0);
