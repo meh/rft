@@ -56,18 +56,18 @@ fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Com
 	// temporary buffer for the juggling
 	let mut tmp = vec![num::Complex::<Precision>::zero(); length];
 
-	// tmp = fft(y)
+	// forward FFT on y (tmp)
 	ct::forward(y, &mut tmp);
 
-	// y = fft(x)
+	// forward FFT on x (y)
 	ct::forward(x, y);
 
-	// multiply x with y
+	// multiply x (y) with y (tmp)
 	for i in 0 .. length {
 		y[i].mul(&tmp[i]);
 	}
 
-	// inverse FFT on x
+	// inverse FFT on x (y)
 	ct::inverse(y, x);
 
 	// scale and set the output
