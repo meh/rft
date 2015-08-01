@@ -67,3 +67,42 @@ pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
 
 	fft(2.0, Stride::new(input), output);
 }
+
+#[cfg(test)]
+mod tests {
+	use num::Complex;
+	use ::ComplexMut;
+
+	macro_rules! assert_approx_eq {
+		($a:expr, $b:expr, $p:expr) => (
+			assert_eq!(format!("{:.1$}", $a.re, $p), format!("{:.1$}", $b.re, $p));
+			assert_eq!(format!("{:.1$}", $a.im, $p), format!("{:.1$}", $b.im, $p));
+		)
+	}
+
+	#[test]
+	fn forward() {
+		let mut output = vec![Complex::new(0.0, 0.0); 4];
+		super::forward(&[1.0, 1.0, 0.0, 0.0], &mut output);
+
+		assert_approx_eq!(output[0], Complex::new(2.00,  0.00), 2);
+		assert_approx_eq!(output[1], Complex::new(1.00, -1.00), 2);
+		assert_approx_eq!(output[2], Complex::new(0.00,  0.00), 2);
+		assert_approx_eq!(output[3], Complex::new(1.00,  1.00), 2);
+	}
+
+	#[test]
+	fn inverse() {
+		let mut output = vec![Complex::new(0.0, 0.0); 4];
+		super::inverse(&[1.0, 1.0, 0.0, 0.0], &mut output);
+
+		for output in output.iter_mut() {
+			ComplexMut::unscale(output, 4.0);
+		}
+
+		assert_approx_eq!(output[0], Complex::new(0.50,  0.00), 2);
+		assert_approx_eq!(output[1], Complex::new(0.25,  0.25), 2);
+		assert_approx_eq!(output[2], Complex::new(0.00,  0.00), 2);
+		assert_approx_eq!(output[3], Complex::new(0.25, -0.25), 2);
+	}
+}
