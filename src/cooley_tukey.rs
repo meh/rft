@@ -66,11 +66,4 @@ pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
 	assert!(input.len().is_power_of_two(), "length is not a power of two");
 
 	fft(2.0, Stride::new(input), output);
-
-	let length = input.len() as Precision;
-
-	// finish the inversion by unscaling by the length
-	for output in output.iter_mut() {
-		output.unscale(length);
-	}
 }

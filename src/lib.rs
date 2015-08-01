@@ -17,8 +17,8 @@ pub mod discrete;
 
 pub mod cooley_tukey;
 
-pub fn forward<C: Complex>(input: &[C]) -> Vec<num::Complex<Precision>> {
-	let mut output = vec![num::Complex::new(0.0, 0.0); input.len()];
+pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
+	let mut output = vec![CO::zero(); input.len()];
 
 	if input.len().is_power_of_two() {
 		cooley_tukey::forward(input, &mut output);
@@ -30,14 +30,21 @@ pub fn forward<C: Complex>(input: &[C]) -> Vec<num::Complex<Precision>> {
 	output
 }
 
-pub fn inverse<C: Complex>(input: &[C]) -> Vec<num::Complex<Precision>> {
-	let mut output = vec![num::Complex::new(0.0, 0.0); input.len()];
+pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI]) -> Vec<CO> {
+	let mut output = vec![CO::zero(); input.len()];
 
 	if input.len().is_power_of_two() {
 		cooley_tukey::inverse(input, &mut output);
 	}
 	else {
 		unimplemented!();
+	}
+
+	// the implementations do no scaling internally
+	let length = input.len() as Precision;
+
+	for output in output.iter_mut() {
+		output.unscale(length);
 	}
 
 	output
