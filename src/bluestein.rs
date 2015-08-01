@@ -42,38 +42,33 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut
 	}
 
 	// do the convultion
-	convolve(&mut a, &mut b, output.reborrow());
+	{
+		// temporary buffer for the juggling
+		let mut tmp = vec![num::Complex::<Precision>::zero(); next];
+
+		// forward FFT on b (tmp)
+		ct::forward(b.as_stride(), tmp.as_stride_mut());
+
+		// forward FFT on a (b)
+		ct::forward(a.as_stride(), b.as_stride_mut());
+
+		// multiply a (b) with b (tmp)
+		for i in 0 .. next {
+			b[i].mul(&tmp[i]);
+		}
+
+		// inverse FFT on a (b)
+		ct::inverse(b.as_stride(), a.as_stride_mut());
+
+		// scale and set the output
+		for (i, output) in output.iter_mut().enumerate() {
+			output.set(&a[i].unscale(next as Precision));
+		}
+	}
 
 	// postprocessing
 	for (output, exp) in output.iter_mut().zip(t.iter()) {
 		output.mul(exp);
-	}
-}
-
-fn convolve<CO: ComplexMut>(x: &mut [num::Complex<Precision>], y: &mut [num::Complex<Precision>], mut output: MutStride<CO>) {
-	// cache the length
-	let length = x.len();
-	
-	// temporary buffer for the juggling
-	let mut tmp = vec![num::Complex::<Precision>::zero(); length];
-
-	// forward FFT on y (tmp)
-	ct::forward(y.as_stride(), tmp.as_stride_mut());
-
-	// forward FFT on x (y)
-	ct::forward(x.as_stride(), y.as_stride_mut());
-
-	// multiply x (y) with y (tmp)
-	for i in 0 .. length {
-		y[i].mul(&tmp[i]);
-	}
-
-	// inverse FFT on x (y)
-	ct::inverse(y.as_stride(), x.as_stride_mut());
-
-	// scale and set the output
-	for (i, output) in output.iter_mut().enumerate() {
-		output.set(&x[i].unscale(length as Precision));
 	}
 }
 
