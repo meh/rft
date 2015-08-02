@@ -3,6 +3,9 @@ extern crate num;
 extern crate strided;
 use strided::{Strided, MutStrided};
 
+#[cfg(all(not(feature = "f64"), not(feature = "f32")))]
+pub type Precision = f32;
+
 #[cfg(feature = "f32")]
 pub type Precision = f32;
 #[cfg(feature = "f64")]

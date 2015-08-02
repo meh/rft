@@ -10,8 +10,6 @@ repository  = "https://github.com/meh/rust-rft"
 keywords    = ["audio", "fft"]
 
 [features]
-default = ["f32"]
-
 f32 = []
 f64 = []
 
