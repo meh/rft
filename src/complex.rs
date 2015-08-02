@@ -119,7 +119,7 @@ impl ComplexMut for num::Complex<f64> {
 impl<R: Real> Complex for R {
 	#[inline(always)]
 	fn real(&self) -> Precision {
-		self.get()
+		self.normalize()
 	}
 
 	#[inline(always)]

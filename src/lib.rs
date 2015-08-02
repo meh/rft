@@ -9,7 +9,7 @@ pub type Precision = f32;
 pub type Precision = f64;
 
 mod real;
-pub use real::{Real, RealMut};
+pub use real::Real;
 
 mod complex;
 pub use complex::{Complex, ComplexMut};
