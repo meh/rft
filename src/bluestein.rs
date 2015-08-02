@@ -74,14 +74,14 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut
 
 pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
-	assert_eq!(input.len(), output.len());
+	debug_assert_eq!(input.len(), output.len());
 
 	fft(-1.0, input, output);
 }
 
 pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
-	assert_eq!(input.len(), output.len());
+	debug_assert_eq!(input.len(), output.len());
 
 	fft(1.0, input, output);
 }
