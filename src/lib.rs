@@ -8,8 +8,8 @@ pub type Precision = f32;
 #[cfg(feature = "f64")]
 pub type Precision = f64;
 
-mod real;
-pub use real::Real;
+mod sample;
+pub use sample::Sample;
 
 mod complex;
 pub use complex::{Complex, ComplexMut};

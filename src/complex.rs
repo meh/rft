@@ -1,5 +1,5 @@
 use num::{self, Zero, One};
-use {Precision, Real};
+use Precision;
 
 pub trait Complex: Zero + One + Clone {
 	fn real(&self) -> Precision;
@@ -113,17 +113,5 @@ impl ComplexMut for num::Complex<f64> {
 	#[inline(always)]
 	fn set_imag(&mut self, value: Precision) {
 		self.im = value as f64;
-	}
-}
-
-impl<R: Real> Complex for R {
-	#[inline(always)]
-	fn real(&self) -> Precision {
-		self.normalize()
-	}
-
-	#[inline(always)]
-	fn imag(&self) -> Precision {
-		0.0
 	}
 }
