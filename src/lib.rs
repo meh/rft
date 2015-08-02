@@ -23,6 +23,8 @@ pub mod cooley_tukey;
 
 pub mod bluestein;
 
+pub mod window;
+
 pub fn forward<CI, CO, I>(input: I) -> Vec<CO>
 	where CI: Complex,
 	      CO: ComplexMut,
