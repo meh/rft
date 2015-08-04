@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use {Precision, Sample, SampleMut};
 use strided::{Strided, MutStrided};
 
+/// Creates a Hamming window from the given input.
 pub fn hamming<S, I>(input: I) -> Vec<Precision>
 	where S: Sample,
 	      I: Strided<Elem=S>,
@@ -13,6 +14,7 @@ pub fn hamming<S, I>(input: I) -> Vec<Precision>
 	output
 }
 
+/// Sets a Hamming window on the given output from the given input.
 pub fn hamming_in<S, I, O>(input: I, mut output: O)
 	where S: Sample,
 	      I: Strided<Elem=S>,
@@ -33,6 +35,7 @@ pub fn hamming_in<S, I, O>(input: I, mut output: O)
 	}
 }
 
+/// Sets a Hamming window in place with the given data.
 pub fn hamming_on<S, IO>(mut data: IO)
 	where S:  SampleMut,
 	      IO: MutStrided<Elem=S>
