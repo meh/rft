@@ -115,3 +115,34 @@ impl ComplexMut for num::Complex<f64> {
 		self.im = value as f64;
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::Complex;
+	use std::{u8, i16, i32};
+
+	macro_rules! assert_approx_eq {
+		($a:expr, $r:expr, $i:expr, $p:expr) => (
+			assert_eq!(format!("{:.1$}", $a.real(), $p), format!("{:.1$}", $r, $p));
+			assert_eq!(format!("{:.1$}", $a.imag(), $p), format!("{:.1$}", $i, $p));
+		)
+	}
+
+	#[test]
+	fn u8() {
+		assert_approx_eq!(u8::MAX,  1.00, 0.00, 2);
+		assert_approx_eq!(u8::MIN, -0.99, 0.00, 2);
+	}
+
+	#[test]
+	fn i16() {
+		assert_approx_eq!(i16::MAX,  1.00, 0.00, 2);
+		assert_approx_eq!(i16::MIN, -1.00, 0.00, 2);
+	}
+
+	#[test]
+	fn i32() {
+		assert_approx_eq!(i32::MAX,  1.00, 0.00, 2);
+		assert_approx_eq!(i32::MIN, -1.00, 0.00, 2);
+	}
+}
