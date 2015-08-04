@@ -12,7 +12,7 @@ pub type Precision = f32;
 pub type Precision = f64;
 
 mod sample;
-pub use sample::Sample;
+pub use sample::{Sample, SampleMut};
 
 mod complex;
 pub use complex::{Complex, ComplexMut};
