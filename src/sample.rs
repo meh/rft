@@ -11,12 +11,14 @@ pub trait SampleMut: Sample {
 }
 
 impl Sample for u8 {
+	#[inline(always)]
 	fn normalize(&self) -> Precision {
 		-((*self as Precision - i8::MAX as Precision) / i8::MIN as Precision)
 	}
 }
 
 impl SampleMut for u8 {
+	#[inline(always)]
 	fn set_normalized(&mut self, value: Precision) {
 		if value >= 0.0 {
 			*self = ((value * 128.0) + 127.0) as u8
@@ -28,12 +30,14 @@ impl SampleMut for u8 {
 }
 
 impl Sample for i16 {
+	#[inline(always)]
 	fn normalize(&self) -> Precision {
 		*self as Precision / -(i16::MIN as Precision)
 	}
 }
 
 impl SampleMut for i16 {
+	#[inline(always)]
 	fn set_normalized(&mut self, value: Precision) {
 		if value >= 0.0 {
 			*self = (value as f64 * i16::MAX as f64) as i16;
@@ -45,12 +49,14 @@ impl SampleMut for i16 {
 }
 
 impl Sample for i32 {
+	#[inline(always)]
 	fn normalize(&self) -> Precision {
 		*self as Precision / -(i32::MIN as Precision)
 	}
 }
 
 impl SampleMut for i32 {
+	#[inline(always)]
 	fn set_normalized(&mut self, value: Precision) {
 		if value >= 0.0 {
 			*self = (value as f64 * i32::MAX as f64) as i32;
@@ -62,24 +68,28 @@ impl SampleMut for i32 {
 }
 
 impl Sample for f32 {
+	#[inline(always)]
 	fn normalize(&self) -> Precision {
 		*self as Precision
 	}
 }
 
 impl SampleMut for f32 {
+	#[inline(always)]
 	fn set_normalized(&mut self, value: Precision) {
 		*self = value as f32;
 	}
 }
 
 impl Sample for f64 {
+	#[inline(always)]
 	fn normalize(&self) -> Precision {
 		*self as Precision
 	}
 }
 
 impl SampleMut for f64 {
+	#[inline(always)]
 	fn set_normalized(&mut self, value: Precision) {
 		*self = value as f64;
 	}

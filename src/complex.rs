@@ -44,6 +44,7 @@ pub trait ComplexMut: Complex {
 		self.set_imag(imag * value);
 	}
 
+	#[inline]
 	fn div<C: Complex>(&mut self, value: &C) {
 		let real = self.real();
 		let imag = self.imag();

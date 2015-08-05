@@ -2,6 +2,7 @@ use std::f64::consts::PI;
 
 use {Precision, Complex, ComplexMut};
 
+#[inline(always)]
 pub fn dft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], output: &mut [CO]) {
 	debug_assert_eq!(input.len(), output.len());
 

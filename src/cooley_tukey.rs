@@ -4,6 +4,7 @@ use std::f64::consts::PI;
 
 use {Precision, Complex, ComplexMut};
 
+#[inline(always)]
 fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	// cache the length
 	let length = input.len();

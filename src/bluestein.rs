@@ -6,6 +6,7 @@ use strided::{Strided, MutStrided, Stride, MutStride};
 use {Precision, Complex, ComplexMut};
 use cooley_tukey as ct;
 
+#[inline(always)]
 fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	let     length = input.len();
 	let mut next   = 1;

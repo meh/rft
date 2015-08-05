@@ -4,6 +4,7 @@ use {Precision, Sample, SampleMut};
 use strided::{Strided, MutStrided};
 
 /// Creates a Hamming window from the given input.
+#[inline]
 pub fn hamming<S, I>(input: I) -> Vec<Precision>
 	where S: Sample,
 	      I: Strided<Elem=S>,
