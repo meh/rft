@@ -25,6 +25,8 @@ pub mod bluestein;
 
 pub mod window;
 
+pub mod spectrum;
+
 pub fn forward<CI, CO, I>(input: I) -> Vec<CO>
 	where CI: Complex,
 	      CO: ComplexMut,
