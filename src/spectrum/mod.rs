@@ -6,7 +6,7 @@ pub use self::average::compute_in as average_in;
 use {Precision, Complex};
 use strided::{Strided, MutStrided};
 
-#[inline]
+#[inline(always)]
 pub fn compute<C, I>(input: I) -> Vec<Precision>
 	where C: Complex,
 	      I: Strided<Elem=C>
@@ -45,7 +45,7 @@ pub fn band<I>(input: I, mut band: usize) -> Precision
 	input[band]
 }
 
-#[inline]
+#[inline(always)]
 pub fn bandwidth(size: usize, rate: u32) -> Precision {
 	(2.0 / size as Precision) * (rate as Precision / 2.0)
 }
