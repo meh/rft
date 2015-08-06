@@ -4,7 +4,6 @@ use std::f64::consts::PI;
 
 use {Precision, Complex, ComplexMut};
 
-#[inline(always)]
 fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	// cache the length
 	let length = input.len();
@@ -49,6 +48,7 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut
 	}
 }
 
+#[inline(always)]
 pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	debug_assert_eq!(input.len(), output.len());
@@ -59,6 +59,7 @@ pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride
 	fft(-2.0, input, output);
 }
 
+#[inline(always)]
 pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	debug_assert_eq!(input.len(), output.len());
