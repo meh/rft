@@ -6,7 +6,6 @@ use strided::{Strided, MutStrided, Stride, MutStride};
 use {Precision, Complex, ComplexMut};
 use cooley_tukey as ct;
 
-#[inline(always)]
 fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	let     length = input.len();
 	let mut next   = 1;
@@ -73,6 +72,7 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut
 	}
 }
 
+#[inline(always)]
 pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	debug_assert_eq!(input.len(), output.len());
@@ -80,6 +80,7 @@ pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride
 	fft(-1.0, input, output);
 }
 
+#[inline(always)]
 pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
 	debug_assert_eq!(input.len(), output.len());
