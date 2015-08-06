@@ -27,7 +27,7 @@ pub mod window;
 
 pub mod spectrum;
 
-#[inline]
+#[inline(always)]
 pub fn forward<CI, CO, I>(input: I) -> Vec<CO>
 	where CI: Complex,
 	      CO: ComplexMut,
@@ -57,7 +57,7 @@ pub fn forward_in<CI, CO, I, O>(input: I, mut output: O)
 	}
 }
 
-#[inline]
+#[inline(always)]
 pub fn inverse<CI, CO, I>(input: I) -> Vec<CO>
 	where CI: Complex,
 	      CO: ComplexMut,
