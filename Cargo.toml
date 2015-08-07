@@ -6,7 +6,7 @@ authors = ["meh. <meh@schizofreni.co>"]
 license = "WTFPL"
 
 description = "FFT handling library."
-repository  = "https://github.com/meh/rust-rft"
+repository  = "https://github.com/meh/rft"
 keywords    = ["audio", "fft"]
 
 [features]
