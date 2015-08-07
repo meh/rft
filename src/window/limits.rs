@@ -1,6 +1,6 @@
 use std::ops::{Range, RangeTo, RangeFrom, RangeFull};
 
-pub trait Limits {
+pub trait Limits: Clone {
 	fn start(&self) -> Option<u32> {
 		None
 	}

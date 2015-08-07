@@ -26,6 +26,7 @@ pub mod cooley_tukey;
 pub mod bluestein;
 
 pub mod window;
+pub use window::Window;
 
 pub mod spectrum;
 
