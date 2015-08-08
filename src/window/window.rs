@@ -1,22 +1,22 @@
-use std::ops::{Deref, DerefMut, Range};
+use std::ops::{self, Deref, DerefMut};
 use num::Zero;
 use strided::{Strided, MutStrided};
 
-use super::limits::Limits;
+use super::range::Range;
 use {Sample, SampleMut};
 
 #[derive(PartialEq, Clone, Debug)]
 pub struct Window<S: SampleMut> {
-	limits: Range<u32>,
+	range:  ops::Range<u32>,
 	buffer: Vec<S>,
 }
 
 impl<S0: SampleMut> Window<S0> {
-	pub fn new<L: Limits>(limits: &L, size: usize) -> Self {
+	pub fn new<R: Range>(range: &R, size: usize) -> Self {
 		Window {
-			limits: Range {
-				start: limits.start().unwrap_or(0),
-				end:   limits.end().unwrap_or(size as u32),
+			range: ops::Range {
+				start: range.start().unwrap_or(0),
+				end:   range.end().unwrap_or(size as u32),
 			},
 
 			buffer: vec![S0::zero(); size],
@@ -33,8 +33,8 @@ impl<S0: SampleMut> Window<S0> {
 		let mut output = vec![SO::zero(); input.len()];
 		let     length = input.len();
 	
-		// Check the limits are valid for the window.
-		debug_assert!(self.limits.is_valid(length));
+		// Check the range are valid for the window.
+		debug_assert!(self.range.is_valid(length));
 
 		self.apply_in(input, &mut *output);
 	
@@ -54,12 +54,12 @@ impl<S0: SampleMut> Window<S0> {
 		// `input` and `output` buffers need to be the same length.
 		debug_assert_eq!(input.len(), output.len());
 	
-		// Check the limits are valid for the window.
-		debug_assert!(self.limits.is_valid(length));
+		// Check the range are valid for the window.
+		debug_assert!(self.range.is_valid(length));
 	
 		for (index, (input, output)) in input.iter().zip(output.iter_mut()).enumerate() {
-			if index >= self.limits.start().unwrap_or(0) as usize &&
-			   index <= self.limits.end().unwrap_or(length as u32) as usize
+			if index >= self.range.start().unwrap_or(0) as usize &&
+			   index <= self.range.end().unwrap_or(length as u32) as usize
 			{
 				output.set_normalized(input.normalize() * self.buffer[index].normalize());
 			}
@@ -73,12 +73,12 @@ impl<S0: SampleMut> Window<S0> {
 		let mut data   = data.as_stride_mut();
 		let     length = data.len();
 	
-		// Check the limits are valid for the window.
-		debug_assert!(self.limits.is_valid(length));
+		// Check the range are valid for the window.
+		debug_assert!(self.range.is_valid(length));
 	
 		for (index, datum) in data.iter_mut().enumerate() {
-			if index >= self.limits.start().unwrap_or(0) as usize &&
-			   index <= self.limits.end().unwrap_or(length as u32) as usize
+			if index >= self.range.start().unwrap_or(0) as usize &&
+			   index <= self.range.end().unwrap_or(length as u32) as usize
 			{
 				let value = datum.normalize();
 	

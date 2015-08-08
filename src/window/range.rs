@@ -1,6 +1,6 @@
-use std::ops::{Range, RangeTo, RangeFrom, RangeFull};
+use std::ops;
 
-pub trait Limits: Clone {
+pub trait Range: Clone {
 	fn start(&self) -> Option<u32> {
 		None
 	}
@@ -22,7 +22,7 @@ pub trait Limits: Clone {
 	}
 }
 
-impl Limits for Range<u32> {
+impl Range for ops::Range<u32> {
 	fn start(&self) -> Option<u32> {
 		Some(self.start)
 	}
@@ -32,16 +32,16 @@ impl Limits for Range<u32> {
 	}
 }
 
-impl Limits for RangeTo<u32> {
+impl Range for ops::RangeTo<u32> {
 	fn end(&self) -> Option<u32> {
 		Some(self.end)
 	}
 }
 
-impl Limits for RangeFrom<u32> {
+impl Range for ops::RangeFrom<u32> {
 	fn start(&self) -> Option<u32> {
 		Some(self.start)
 	}
 }
 
-impl Limits for RangeFull { }
+impl Range for ops::RangeFull { }

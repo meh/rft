@@ -1,5 +1,5 @@
-mod limits;
-use self::limits::Limits;
+mod range;
+pub use self::range::Range;
 
 mod window;
 pub use self::window::Window;
@@ -40,32 +40,32 @@ pub fn compute<F, S>(index: usize, width: usize) -> S
 }
 
 #[inline(always)]
-pub fn apply<F, SO, SI, I, L>(limits: L, input: I) -> Vec<SO>
+pub fn apply<F, SO, SI, I, R>(range: R, input: I) -> Vec<SO>
 	where F:  Function,
 	      SO: SampleMut,
 	      SI: Sample,
 	      I:  Strided<Elem=SI>,
-	      L:  Limits
+	      R:  Range
 {
 	let     input  = input.as_stride();
 	let mut output = vec![SO::zero(); input.len()];
 	let     length = input.len();
 
-	// Check the limits are valid for the window.
-	debug_assert!(limits.is_valid(length));
+	// Check the range are valid for the window.
+	debug_assert!(range.is_valid(length));
 
-	apply_in::<F, SO, SI, _, _, L>(limits, input, &mut *output);
+	apply_in::<F, SO, SI, _, _, R>(range, input, &mut *output);
 
 	output
 }
 
-pub fn apply_in<F, SO, SI, I, O, L>(limits: L, input: I, mut output: O)
+pub fn apply_in<F, SO, SI, I, O, R>(range: R, input: I, mut output: O)
 	where F:  Function,
 	      SO: SampleMut,
 	      SI: Sample,
 	      I:  Strided<Elem=SI>,
 	      O:  MutStrided<Elem=SO>,
-	      L:  Limits
+	      R:  Range
 {
 	let     input  = input.as_stride();
 	let mut output = output.as_stride_mut();
@@ -74,59 +74,59 @@ pub fn apply_in<F, SO, SI, I, O, L>(limits: L, input: I, mut output: O)
 	// `input` and `output` buffers need to be the same length.
 	debug_assert_eq!(input.len(), output.len());
 
-	// Check the limits are valid for the window.
-	debug_assert!(limits.is_valid(length));
+	// Check the range are valid for the window.
+	debug_assert!(range.is_valid(length));
 
 	for (index, (input, output)) in input.iter().zip(output.iter_mut()).enumerate() {
-		if index >= limits.start().unwrap_or(0) as usize &&
-		   index <= limits.end().unwrap_or(length as u32) as usize
+		if index >= range.start().unwrap_or(0) as usize &&
+		   index <= range.end().unwrap_or(length as u32) as usize
 		{
 			output.set_normalized(input.normalize()
-				* F::compute(index as Precision, limits.width(length) as Precision));
+				* F::compute(index as Precision, range.width(length) as Precision));
 		}
 	}
 }
 
-pub fn apply_on<F, S, IO, L>(limits: L, mut data: IO)
+pub fn apply_on<F, S, IO, R>(range: R, mut data: IO)
 	where F:  Function,
 	      S:  SampleMut,
 	      IO: MutStrided<Elem=S>,
-	      L:  Limits
+	      R:  Range
 {
 	let mut data   = data.as_stride_mut();
 	let     length = data.len();
 
-	// Check the limits are valid for the window.
-	debug_assert!(limits.is_valid(length));
+	// Check the range are valid for the window.
+	debug_assert!(range.is_valid(length));
 
 	for (index, datum) in data.iter_mut().enumerate() {
-		if index >= limits.start().unwrap_or(0) as usize &&
-		   index <= limits.end().unwrap_or(length as u32) as usize
+		if index >= range.start().unwrap_or(0) as usize &&
+		   index <= range.end().unwrap_or(length as u32) as usize
 		{
 			let value = datum.normalize();
 
 			datum.set_normalized(value
-				* F::compute(index as Precision, limits.width(length) as Precision));
+				* F::compute(index as Precision, range.width(length) as Precision));
 		}
 	}
 }
 
-pub fn generate<F, S, L>(limits: L, size: usize) -> Window<S>
+pub fn generate<F, S, R>(range: R, size: usize) -> Window<S>
 	where F: Function,
 	      S: SampleMut,
-	      L: Limits
+	      R: Range
 {
-	let mut output = Window::new(&limits, size);
+	let mut output = Window::new(&range, size);
 
-	// Check the limits are valid for the window.
-	debug_assert!(limits.is_valid(size));
+	// Check the range are valid for the window.
+	debug_assert!(range.is_valid(size));
 
 	for (index, output) in output.iter_mut().enumerate() {
-		if index >= limits.start().unwrap_or(0) as usize &&
-		   index <= limits.end().unwrap_or(size as u32) as usize
+		if index >= range.start().unwrap_or(0) as usize &&
+		   index <= range.end().unwrap_or(size as u32) as usize
 		{
 			SampleMut::set_normalized(output,
-				F::compute(index as Precision, limits.width(size) as Precision));
+				F::compute(index as Precision, range.width(size) as Precision));
 		}
 	}
 
