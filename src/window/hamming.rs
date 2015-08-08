@@ -7,7 +7,8 @@ pub struct Hamming;
 
 const ALPHA: Precision = 0.53836;
 const BETA:  Precision = 0.46164;
-const PI2:   Precision = (PI * 2.0) as Precision;
+
+const PI2: Precision = (PI * 2.0) as Precision;
 
 impl Function for Hamming {
 	fn compute(n: Precision, N: Precision) -> Precision {
