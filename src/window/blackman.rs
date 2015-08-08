@@ -6,7 +6,6 @@ use {Precision};
 pub struct Blackman;
 
 const ALPHA: Precision = 0.16;
-const BETA:  Precision = 1.73;
 
 const ALPHA0: Precision = (1.0 - ALPHA) / 2.0;
 const ALPHA1: Precision = 1.0 / 2.0;

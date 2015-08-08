@@ -8,7 +8,7 @@ pub struct Nuttall;
 const ALPHA0: Precision = 0.355768;
 const ALPHA1: Precision = 0.487396;
 const ALPHA2: Precision = 0.144232;
-const ALPAH3: Precision = 0.012604;
+const ALPHA3: Precision = 0.012604;
 
 const PI2: Precision = (PI * 2.0) as Precision;
 const PI4: Precision = (PI * 4.0) as Precision;
