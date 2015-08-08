@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use {Precision};
 
-pub struct Welch;
+pub struct Blackman;
 
 const ALPHA: Precision = 0.16;
 const BETA:  Precision = 1.73;

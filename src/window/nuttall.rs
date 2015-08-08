@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use {Precision};
 
-pub struct Welch;
+pub struct Nuttall;
 
 const ALPHA0: Precision = 0.355768;
 const ALPHA1: Precision = 0.487396;
