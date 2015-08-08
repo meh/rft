@@ -13,11 +13,23 @@ pub use self::triangular::Triangular;
 mod bartlett;
 pub use self::bartlett::Bartlett;
 
+mod parzen;
+pub use self::parzen::Parzen;
+
 mod hamming;
 pub use self::hamming::Hamming;
 
 mod hann;
 pub use self::hann::Hann;
+
+mod welch;
+pub use self::welch::Welch;
+
+mod blackman;
+pub use self::blackman::Blackman;
+
+mod nuttall;
+pub use self::nuttall::Nuttall;
 
 use num::Zero;
 
