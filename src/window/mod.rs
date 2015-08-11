@@ -36,10 +36,13 @@ use num::Zero;
 use {Precision, Sample, SampleMut};
 use strided::{Strided, MutStrided};
 
+/// Trait to implement a window function.
 pub trait Function {
+	/// Computes the value for the given index `n` and the given window size `N`.
 	fn compute(n: Precision, N: Precision) -> Precision;
 }
 
+/// Computes the window function for the given index and window size.
 #[inline(always)]
 pub fn compute<F, S>(index: usize, width: usize) -> S
 	where F: Function,
@@ -51,6 +54,8 @@ pub fn compute<F, S>(index: usize, width: usize) -> S
 	result
 }
 
+/// Applies the given window function within the given range on the given input
+/// returning a new vector with the applied window function.
 #[inline(always)]
 pub fn apply<F, SO, SI, I, R>(range: R, input: I) -> Vec<SO>
 	where F:  Function,
@@ -71,6 +76,8 @@ pub fn apply<F, SO, SI, I, R>(range: R, input: I) -> Vec<SO>
 	output
 }
 
+/// Applies the given window function within the given range on the given input
+/// putting the result into the given output.
 pub fn apply_in<F, SO, SI, I, O, R>(range: R, input: I, mut output: O)
 	where F:  Function,
 	      SO: SampleMut,
@@ -99,6 +106,7 @@ pub fn apply_in<F, SO, SI, I, O, R>(range: R, input: I, mut output: O)
 	}
 }
 
+/// Applies the given window function within the given range in-place.
 pub fn apply_on<F, S, IO, R>(range: R, mut data: IO)
 	where F:  Function,
 	      S:  SampleMut,
@@ -123,6 +131,8 @@ pub fn apply_on<F, S, IO, R>(range: R, mut data: IO)
 	}
 }
 
+/// Generates a window function within the given range for the given window
+/// size.
 pub fn generate<F, S, R>(range: R, size: usize) -> Window<S>
 	where F: Function,
 	      S: SampleMut,

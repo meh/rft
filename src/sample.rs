@@ -2,11 +2,15 @@ use std::{i8, i16, i32};
 use num::{Zero, One};
 use {Precision, Complex};
 
+/// Trait for sample data, usually from a music file, used for input.
 pub trait Sample: Zero + One + Clone {
+	/// Returns a normalized value between `-1.0` and `1.0`.
 	fn normalize(&self) -> Precision;
 }
 
+/// Trait for mutable sample data, used for output.
 pub trait SampleMut: Sample {
+	/// Sets a normalized value between `-1.0` and `1.0`.
 	fn set_normalized(&mut self, value: Precision);
 }
 

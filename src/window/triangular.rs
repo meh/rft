@@ -1,6 +1,7 @@
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Rectangular_window
 pub struct Triangular;
 
 impl Function for Triangular {

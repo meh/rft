@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Nuttall_window.2C_continuous_first_derivative
 pub struct Nuttall;
 
 const ALPHA0: Precision = 0.355768;

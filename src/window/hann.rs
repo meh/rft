@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use Precision;
 
+/// https://en.wikipedia.org/wiki/Window_function#Hann_.28Hanning.29_window
 pub struct Hann;
 
 const PI2: Precision = (PI * 2.0) as Precision;

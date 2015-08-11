@@ -1,3 +1,4 @@
+/// Various average algorithms.
 pub mod average;
 pub use self::average::Average;
 pub use self::average::compute as average;
@@ -6,6 +7,8 @@ pub use self::average::compute_in as average_in;
 use {Precision, Complex};
 use strided::{Strided, MutStrided};
 
+/// Computes the spectrum of the given input and returns a vector with the
+/// computed values.
 #[inline(always)]
 pub fn compute<C, I>(input: I) -> Vec<Precision>
 	where C: Complex,
@@ -17,6 +20,7 @@ pub fn compute<C, I>(input: I) -> Vec<Precision>
 	output
 }
 
+/// Computes the spectrum of the given input into the given output.
 pub fn compute_in<C, I, O>(input: I, mut output: O)
 	where C: Complex,
 	      I: Strided<Elem=C>,
@@ -32,6 +36,7 @@ pub fn compute_in<C, I, O>(input: I, mut output: O)
 	}
 }
 
+/// Returns the value of the band in the given spectrum.
 #[inline]
 pub fn band<I>(input: I, mut band: usize) -> Precision
 	where I: Strided<Elem=Precision>
@@ -45,11 +50,14 @@ pub fn band<I>(input: I, mut band: usize) -> Precision
 	input[band]
 }
 
+/// Returns the bandwidth for the given window size and sample rate.
 #[inline(always)]
 pub fn bandwidth(size: usize, rate: u32) -> Precision {
 	(2.0 / size as Precision) * (rate as Precision / 2.0)
 }
 
+/// Gets the index for the given frequency in a window of the given size and
+/// sample rate.
 pub fn index_for(frequency: u32, size: usize, rate: u32) -> usize {
 	let bandwidth = bandwidth(size, rate);
 
@@ -64,6 +72,8 @@ pub fn index_for(frequency: u32, size: usize, rate: u32) -> usize {
 	(size as Precision * (frequency as Precision / rate as Precision)).round() as usize
 }
 
+/// Returns the frequency for the given index in a window of the given size and
+/// sample rate.
 pub fn frequency_for(index: usize, size: usize, rate: u32) -> u32 {
 	let bandwidth = bandwidth(size, rate);
 

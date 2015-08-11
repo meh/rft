@@ -1,31 +1,37 @@
 use num::{self, Zero, One};
 use Precision;
 
+/// Trait representing complex numbers.
 pub trait Complex: Zero + One + Clone {
+	/// Gets the real part.
 	fn real(&self) -> Precision;
+
+	/// Gets the imaginary part.
 	fn imag(&self) -> Precision;
 
+	/// Returns a `num::Complex` so it can be used internally.
 	#[inline]
 	fn to_num(&self) -> num::Complex<Precision> {
 		num::Complex::new(self.real(), self.imag())
 	}
-
-	#[inline]
-	fn to_real(&self) -> Precision {
-		self.to_num().norm()
-	}
 }
 
+/// Trait representing mutable complex numbers.
 pub trait ComplexMut: Complex {
+	/// Sets the real part.
 	fn set_real(&mut self, value: Precision);
+
+	/// Sets the imaginary part.
 	fn set_imag(&mut self, value: Precision);
 
+	/// Sets the real and imaginary part from another `Complex`.
 	#[inline]
 	fn set<C: Complex>(&mut self, value: &C) {
 		self.set_real(value.real());
 		self.set_imag(value.imag());
 	}
 
+	/// Multiplies in-place with another `Complex`.
 	#[inline]
 	fn mul<C: Complex>(&mut self, value: &C) {
 		let real = self.real();
@@ -35,6 +41,7 @@ pub trait ComplexMut: Complex {
 		self.set_imag(real * value.imag() + imag * value.real());
 	}
 
+	/// Scales in-place.
 	#[inline]
 	fn scale(&mut self, value: Precision) {
 		let real = self.real();
@@ -44,6 +51,7 @@ pub trait ComplexMut: Complex {
 		self.set_imag(imag * value);
 	}
 
+	/// Divides in-place with another `Complex`.
 	#[inline]
 	fn div<C: Complex>(&mut self, value: &C) {
 		let real = self.real();
@@ -54,6 +62,7 @@ pub trait ComplexMut: Complex {
 		self.set_imag((imag * value.real() - real * value.imag()) / sqr);
 	}
 
+	/// Unscales in-place.
 	#[inline]
 	fn unscale(&mut self, value: Precision) {
 		let real = self.real();

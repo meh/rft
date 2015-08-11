@@ -7,21 +7,31 @@ pub use self::logarithmic::Logarithmic;
 use {Precision};
 use strided::{Strided, MutStrided, Stride, MutStride};
 
+/// Trait to implement average algorithms.
 pub trait Average {
+	/// The additional arguments type.
 	type Arguments;
 
+	/// Computes the output size of the algorithm.
 	fn size(args: &Self::Arguments) -> usize;
-	fn compute(args: &Self::Arguments, input: Stride<Precision>, mut output: MutStride<Precision>);
+
+	/// Computes the average from the given arguments and input into the given
+	/// ouotput.
+	fn compute(args: &Self::Arguments,
+	           input: Stride<Precision>,
+	           mut output: MutStride<Precision>);
 }
 
-#[inline]
+/// Get the size of the output for the given algorithm.
+#[inline(always)]
 pub fn size<A>(args: &A::Arguments) -> usize
 	where A: Average
 {
 	A::size(args)
 }
 
-#[inline]
+/// Compute the average of the given input and return a vector with the output.
+#[inline(always)]
 pub fn compute<A, I>(args: &A::Arguments, input: I) -> Vec<Precision>
 	where A: Average,
 	      I: Strided<Elem=Precision>
@@ -32,7 +42,8 @@ pub fn compute<A, I>(args: &A::Arguments, input: I) -> Vec<Precision>
 	output
 }
 
-#[inline]
+/// Compute the average of the given input in the given output.
+#[inline(always)]
 pub fn compute_in<A, I, O>(args: &A::Arguments, input: I, mut output: O)
 	where A: Average,
 	      I: Strided<Elem=Precision>,

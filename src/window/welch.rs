@@ -1,6 +1,7 @@
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Welch_window
 pub struct Welch;
 
 impl Function for Welch {

@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Blackman_windows
 pub struct Blackman;
 
 const ALPHA: Precision = 0.16;

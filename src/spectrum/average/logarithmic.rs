@@ -4,6 +4,7 @@ use {Precision};
 use spectrum::average::Average;
 use spectrum::index_for;
 
+/// Logarithmic average.
 pub struct Logarithmic;
 
 impl Average for Logarithmic {

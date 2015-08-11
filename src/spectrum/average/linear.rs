@@ -3,6 +3,7 @@ use strided::{Stride, MutStride};
 use {Precision};
 use super::Average;
 
+/// Linear average.
 pub struct Linear;
 
 impl Average for Linear {

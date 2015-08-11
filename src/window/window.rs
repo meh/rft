@@ -5,6 +5,7 @@ use strided::{Strided, MutStrided};
 use super::range::Range;
 use {Sample, SampleMut};
 
+/// Represents a cached window function on a range and window size.
 #[derive(PartialEq, Clone, Debug)]
 pub struct Window<S: SampleMut> {
 	range:  ops::Range<u32>,
@@ -12,6 +13,7 @@ pub struct Window<S: SampleMut> {
 }
 
 impl<S0: SampleMut> Window<S0> {
+	#[doc(hidden)]
 	pub fn new<R: Range>(range: &R, size: usize) -> Self {
 		Window {
 			range: ops::Range {
@@ -23,6 +25,8 @@ impl<S0: SampleMut> Window<S0> {
 		}
 	}
 
+	/// Applies the cached window on the given input and return a vector with the
+	/// applied result.
 	#[inline(always)]
 	pub fn apply<SO, SI, I>(&self, input: I) -> Vec<SO>
 		where SO: SampleMut,
@@ -40,7 +44,9 @@ impl<S0: SampleMut> Window<S0> {
 	
 		output
 	}
-	
+
+	/// Applies the cached window on the given input putting the result in the
+	/// given output.
 	pub fn apply_in<SO, SI, I, O>(&self, input: I, mut output: O)
 		where SO: SampleMut,
 		      SI: Sample,
@@ -66,6 +72,7 @@ impl<S0: SampleMut> Window<S0> {
 		}
 	}
 	
+	/// Applies the cached window in-place on the given data.
 	pub fn apply_on<S, IO>(&self, mut data: IO)
 		where S:  SampleMut,
 		      IO: MutStrided<Elem=S>,

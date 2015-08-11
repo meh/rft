@@ -1,6 +1,7 @@
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Triangular_window
 pub struct Bartlett;
 
 impl Function for Bartlett {

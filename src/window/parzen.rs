@@ -1,6 +1,7 @@
 use super::Function;
 use {Precision};
 
+/// https://en.wikipedia.org/wiki/Window_function#Parzen_window
 pub struct Parzen;
 
 impl Function for Parzen {

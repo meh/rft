@@ -1,9 +1,9 @@
 use std::f64::consts::PI;
+use strided::{Stride, MutStride};
 
 use {Precision, Complex, ComplexMut};
 
-#[inline(always)]
-pub fn dft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], output: &mut [CO]) {
+fn dft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	debug_assert_eq!(input.len(), output.len());
 
 	let length = input.len() as Precision;
@@ -28,10 +28,24 @@ pub fn dft<CI: Complex, CO: ComplexMut>(direction: Precision, input: &[CI], outp
 	}
 }
 
-pub fn forward<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+/// Applies a forward discrete Fourier transform on the given input and puts
+/// the result in the given output.
+#[inline(always)]
+pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
+	// input and output buffers need to be the same length
+	debug_assert_eq!(input.len(), output.len());
+
 	dft(2.0, input, output);
 }
 
-pub fn inverse<CI: Complex, CO: ComplexMut>(input: &[CI], output: &mut [CO]) {
+/// Applies an inverse discrete Fourier transform on the given input and puts
+/// the result in the given output.
+///
+/// Note the result is not scaled.
+#[inline(always)]
+pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
+	// input and output buffers need to be the same length
+	debug_assert_eq!(input.len(), output.len());
+
 	dft(-2.0, input, output);
 }

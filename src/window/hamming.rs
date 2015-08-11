@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use super::Function;
 use Precision;
 
+/// https://en.wikipedia.org/wiki/Window_function#Hamming_window
 pub struct Hamming;
 
 const ALPHA: Precision = 0.53836;

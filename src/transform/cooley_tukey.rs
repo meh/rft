@@ -48,6 +48,8 @@ fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut
 	}
 }
 
+/// Applies a forward Cooley-Tukey Fourier transform on the given input and
+/// puts the result in the given output.
 #[inline(always)]
 pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
@@ -59,6 +61,10 @@ pub fn forward<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride
 	fft(-2.0, input, output);
 }
 
+/// Applies an inverse Cooley-Tukey Fourier transform on the given input and
+/// puts the result in the given output.
+///
+/// Note the result is not scaled.
 #[inline(always)]
 pub fn inverse<CI: Complex, CO: ComplexMut>(input: Stride<CI>, output: MutStride<CO>) {
 	// input and output buffers need to be the same length
