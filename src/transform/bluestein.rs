@@ -4,7 +4,7 @@ use num::{self, Zero};
 use strided::{Strided, MutStrided, Stride, MutStride};
 
 use {Precision, Complex, ComplexMut};
-use cooley_tukey as ct;
+use super::cooley_tukey as ct;
 
 fn fft<CI: Complex, CO: ComplexMut>(direction: Precision, input: Stride<CI>, mut output: MutStride<CO>) {
 	let     length = input.len();

@@ -19,11 +19,8 @@ pub use sample::{Sample, SampleMut};
 mod complex;
 pub use complex::{Complex, ComplexMut};
 
-pub mod discrete;
-
-pub mod cooley_tukey;
-
-pub mod bluestein;
+pub mod transform;
+use transform::{cooley_tukey, bluestein};
 
 pub mod window;
 pub use window::Window;
