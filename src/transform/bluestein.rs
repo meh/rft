@@ -94,10 +94,21 @@ mod tests {
 	use strided::{Stride, MutStrided};
 	use ::ComplexMut;
 
+	macro_rules! fix {
+		($a:expr) => (
+			if $a == "-0.00" {
+				"0.00".to_owned()
+			}
+			else {
+				$a
+			}
+		)
+	}
+
 	macro_rules! assert_approx_eq {
-		($a:expr, $b:expr, $p:expr) => (
-			assert_eq!(format!("{:.1$}", $a.re, $p), format!("{:.1$}", $b.re, $p));
-			assert_eq!(format!("{:.1$}", $a.im, $p), format!("{:.1$}", $b.im, $p));
+		($a:expr, $b:expr) => (
+			assert_eq!(fix!(format!("{:.2}", $a.re)), fix!(format!("{:.2}", $b.re)));
+			assert_eq!(fix!(format!("{:.2}", $a.im)), fix!(format!("{:.2}", $b.im)));
 		)
 	}
 
@@ -106,11 +117,11 @@ mod tests {
 		let mut output = vec![Complex::new(0.0, 0.0); 5];
 		super::forward(Stride::new(&[1.0, 1.0, 0.0, 0.0, 0.5]), output.as_stride_mut());
 
-		assert_approx_eq!(output[0], Complex::new( 2.50, -0.001), 2);
-		assert_approx_eq!(output[1], Complex::new( 1.46, -0.48 ), 2);
-		assert_approx_eq!(output[2], Complex::new(-0.21, -0.29 ), 2);
-		assert_approx_eq!(output[3], Complex::new(-0.21,  0.29 ), 2);
-		assert_approx_eq!(output[4], Complex::new( 1.46,  0.48 ), 2);
+		assert_approx_eq!(output[0], Complex::new( 2.50,  0.00));
+		assert_approx_eq!(output[1], Complex::new( 1.46, -0.48));
+		assert_approx_eq!(output[2], Complex::new(-0.21, -0.29));
+		assert_approx_eq!(output[3], Complex::new(-0.21,  0.29));
+		assert_approx_eq!(output[4], Complex::new( 1.46,  0.48));
 	}
 
 	#[test]
@@ -122,10 +133,10 @@ mod tests {
 			ComplexMut::unscale(output, 5.0);
 		}
 
-		assert_approx_eq!(output[0], Complex::new( 0.50, -0.001), 2);
-		assert_approx_eq!(output[1], Complex::new( 0.29,  0.10 ), 2);
-		assert_approx_eq!(output[2], Complex::new(-0.04,  0.06 ), 2);
-		assert_approx_eq!(output[3], Complex::new(-0.04, -0.06 ), 2);
-		assert_approx_eq!(output[4], Complex::new( 0.29, -0.10 ), 2);
+		assert_approx_eq!(output[0], Complex::new( 0.50,  0.00));
+		assert_approx_eq!(output[1], Complex::new( 0.29,  0.10));
+		assert_approx_eq!(output[2], Complex::new(-0.04,  0.06));
+		assert_approx_eq!(output[3], Complex::new(-0.04, -0.06));
+		assert_approx_eq!(output[4], Complex::new( 0.29, -0.10));
 	}
 }
